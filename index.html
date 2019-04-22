@@ -3,6 +3,7 @@
 <head>
 	<title>Glitch</title>
 		<link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
 		<script src="https://d3js.org/d3.v5.min.js"></script>
 		<meta name="viewport" content="width=device-width">
 </head>
@@ -37,6 +38,30 @@ h1 {
 	opacity:0.8;
 	text-align:center;
 }
+h2 {
+	font-family:'Inconsolata', monospace;
+	color:white;
+	position:absolute;
+	opacity:1;
+	z-index:300;
+	text-transform:uppercase;
+	font-size:0.8em;
+
+}
+.label {
+	top:0;
+	left:0;
+	margin:5%;
+}
+.labeller {
+	bottom: 0%;
+	right:0%;
+	background-color:#1d1d1d;
+	opacity:1;
+	padding:3%;
+	transition:1s all ease-in-out;
+	animation: crawl 30s ease-in-out infinite;
+}
 .glitch {
 	position:absolute;
 	top:0;
@@ -46,6 +71,17 @@ h1 {
 	z-index:200;
 	animation: glitch 0.05s linear 0.1s infinite;
 
+}
+@keyframes crawl {
+	0% {
+		right:80%;
+	}
+	50% {
+		right:0%;
+	}
+	100% {
+		right:80%;
+	}
 }
 @keyframes glitch {
 	0% {
@@ -65,7 +101,7 @@ h1 {
 	background-color:#e8b586;
 }
 #beauty {
-	background-color:#1aa7ca;
+	background-color:#e00808;
 }
 #black {
 	background-color:#1d1d1d;
@@ -129,10 +165,19 @@ function drawClusters(data) {
 		div.setAttribute('id', actual)
 		h1 = document.createElement('h1')
 		h1.innerHTML=predict;
+		h2 = document.createElement('h2')
+		h2.innerHTML="Google image dataset: " + actual + " // top 20"
+		h2.setAttribute('class','label')
 		h1.setAttribute("id", actual+"prediction")
 		overlay = document.createElement('div')
 		overlay.setAttribute('class', 'overlay')
+		labeller = document.createElement('h2')
+		labeller.innerHTML="Anonymous " + random+ " // city, country // M // 32"
+		labeller.setAttribute('id', 'labeller'+actual)
+		labeller.setAttribute("class", "labeller")
 		div.appendChild(h1)
+		div.appendChild(h2)
+		div.appendChild(labeller)
 		// get the images
 		getImages(path, actual, target, div, overlay)
 	}
@@ -174,13 +219,15 @@ function glitchLabels(data){
 		for(i=0;i<keywords.length;i++){
 			target = document.querySelector('#'+keywords[i]+"prediction")
 			random = Math.floor((Math.random() * 3) + 1);
+			labeller = document.querySelector('#labeller'+keywords[i])
 			select = data.filter(function(d){return d.keyword == keywords[i]})
 			predict = select[0]['predict'+random]
 			target.innerHTML=predict;
+			labeller.innerHTML="Anonymous " + random+ " // city, country // M // 32"
 		}
 		setTimeout(function() {
-			document.querySelector('.glitch')
 			glitch.remove();
+
 		},1000)
 	},5000)
 }
