@@ -9,17 +9,23 @@
 </head>
 <style>
 body, html {
+	 scroll-snap-type: y mandatory;
 	margin:0;
 	top:0;
 	left:0;
 	position:relative;
 }
-.cluster {
+.cluster, .main {
+	scroll-snap-align: center;
+	scroll-snap-stop: always;
 	width:100%;
 	height:100vh;
 	position:relative;
 	display:block;
 	overflow:hidden;
+}
+.main {
+	background-color:#1d1d1d;
 }
 .cluster img {
 	width:20%;
@@ -126,6 +132,9 @@ h2 {
 }
 </style>
 <body>
+<div class="main">
+	<h1>Glitch</h1>
+</div>
 
 </body>
 <script>
