@@ -2,18 +2,106 @@
 <html>
 <head>
 	<title>Glitch</title>
+		<link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
 		<script src="https://d3js.org/d3.v5.min.js"></script>
 		<meta name="viewport" content="width=device-width">
 </head>
+<style>
+body, html {
+	margin:0;
+	top:0;
+	left:0;
+	position:relative;
+}
+.cluster {
+	width:100%;
+	height:100vh;
+	position:relative;
+	display:block;
+	overflow:hidden;
+}
+.cluster img {
+	width:20%;
+	position:absolute;
+}
+h1 {
+	width:100%;
+	position:absolute;
+	font-size:20em;
+	font-family:'Fjalla One', sans-serif;
+	letter-spacing:-0.05em;
+	text-transform:uppercase;
+	vertical-align:text-top;
+	z-index:100;
+	color:white;
+	opacity:0.8;
+	text-align:center;
+}
+.glitch {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	z-index:200;
+	animation: glitch 0.5s linear 0.1s infinite;
+
+}
+@keyframes glitch {
+	0% {
+		opacity:0.5;
+	}
+	25% {
+		opacity:1;
+	}
+	50% {
+		opacity:0.5;
+	}
+	100% {
+		opacity:1;
+	}
+}
+#bao{
+	background-color:#e8b586;
+}
+#beauty {
+	background-color:#1aa7ca;
+}
+#black {
+	background-color:#1d1d1d;
+	color:white!important;
+}
+#crunchy {
+	background-color:#022650;
+}
+#grass {
+	background-color:#f17a71;
+}
+#intellect {
+	background-color:#443489;
+}
+.overlay {
+	position:absolute;
+	background-color:#1d1d1d;
+	mix-blend-mode: multiply;
+	opacity:0.5;
+	width:100%;
+	height:100%;
+}
+</style>
 <body>
 
 </body>
 <script>
+
 var keywords;
+
 // get the predictions data
 d3.csv('data/predictions.csv')
 	.then(function(data){
 		getKeywords(data)
+		drawClusters(data)
+		glitchLabels(data);
 	})
 	.catch(function(error){
 
@@ -23,7 +111,79 @@ function getKeywords(data){
 	keywords= data.map(function(d){return d.keyword})
 }
 
-// helpers
+function drawClusters(data) {
+	for (i=0;i<keywords.length;i++){
+		// actual keyword
+		actual = keywords[i];
+		path = 'data/json/'+actual+'.json'
+		// choose random prediction
+		random = Math.floor((Math.random() * 3) + 1);
+		console.log(path);
+		select = data.filter(function(d){return d.keyword == actual})
+		console.log(select);
+		predict = select[0]['predict'+random]
+		// create container
+		target = document.querySelector('body');
+		div = document.createElement('div');
+		div.setAttribute("class", "cluster")
+		div.setAttribute('id', actual)
+		h1 = document.createElement('h1')
+		h1.innerHTML=predict;
+		h1.setAttribute("id", actual+"prediction")
+		overlay = document.createElement('div')
+		overlay.setAttribute('class', 'overlay')
+		div.appendChild(h1)
+		// get the images
+		getImages(path, actual, target, div, overlay)
+	}
+}
+
+function getImages(path, keyword, target, div, overlay){
+	console.log(keyword)
+	console.log(path)
+	d3.json(path)
+		.then (function(data){
+			data= data.filter(function(d){return d.s != "src"})
+			for(j=0;j<data.length;j++){
+				img = document.createElement('img')
+				img.src = "downloads/" + keyword + "/" + data[j]['s'];
+				w = window.innerWidth;
+				h = window.innerHeight;
+				random_top = Math.floor((Math.random() * h) + 1);
+				random_left = Math.floor((Math.random() * w) + 1);
+				img.style.top=random_top + "px";
+				img.style.left=random_left + "px";
+				div.appendChild(img)
+			}
+			div.appendChild(overlay)
+			target.appendChild(div)
+		})
+		.catch(function(error){
+
+		})
+
+}
+
+function glitchLabels(data){
+	setInterval(function() {
+		body = document.querySelector('body')
+		glitch = document.createElement('img')
+		glitch.src="assets/glitch.jpg"
+		glitch.setAttribute("class", "glitch")
+		body.appendChild(glitch);
+		for(i=0;i<keywords.length;i++){
+			target = document.querySelector('#'+keywords[i]+"prediction")
+			random = Math.floor((Math.random() * 3) + 1);
+			select = data.filter(function(d){return d.keyword == keywords[i]})
+			predict = select[0]['predict'+random]
+			target.innerHTML=predict;
+		}
+		setTimeout(function() {
+			document.querySelector('.glitch')
+			glitch.remove();
+		},1000)
+	},5000)
+}
 
 </script>
 </html>
