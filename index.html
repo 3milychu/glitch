@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Glitch</title>
+		<script src="https://d3js.org/d3.v5.min.js"></script>
+		<meta name="viewport" content="width=device-width">
+</head>
+<body>
+
+</body>
+<script>
+var keywords;
+// get the predictions data
+d3.csv('data/predictions.csv')
+	.then(function(data){
+		getKeywords(data)
+	})
+	.catch(function(error){
+
+	})
+
+function getKeywords(data){
+	keywords= data.map(function(d){return d.keyword})
+}
+
+// helpers
+
+</script>
+</html>
