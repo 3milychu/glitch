@@ -15,7 +15,7 @@ body, html {
 	left:0;
 	position:relative;
 }
-.cluster, .main {
+.cluster, .main, .about {
 	scroll-snap-align: center;
 	scroll-snap-stop: always;
 	width:100%;
@@ -24,8 +24,18 @@ body, html {
 	display:block;
 	overflow:hidden;
 }
-.main {
+.main, .about {
 	background-color:#1d1d1d;
+}
+.about p {
+	text-align:center;
+	font-family:'Inconsolata', monospace;
+	color:white;
+	  margin: 0;
+	  position: absolute;
+	  top: 50%;
+	  left: 50%;
+	  transform: translate(-50%, -50%);
 }
 .cluster img {
 	width:20%;
@@ -136,6 +146,10 @@ h2 {
 	<h1>Glitch</h1>
 </div>
 
+<div class="about">
+	<p>Glitch scraped Google images for the top 100 images of selected keywords to represent clusters of information. It asked 5 persons of different cultural orientations to serve as “mechanical turks” to label the clusters.  Each set of images is modified with a random label prediction from a “mechanical turk”, and who they were. It hopes to show that labelling and naming clusters in classification, an often taken-for-granted element of truth in machine learning models, are subjective.</p>
+</div>
+
 </body>
 <script>
 
@@ -163,33 +177,36 @@ function drawClusters(data) {
 		path = 'data/json/'+actual+'.json'
 		// choose random prediction
 		random = Math.floor((Math.random() * 3) + 1);
-		console.log(path);
 		select = data.filter(function(d){return d.keyword == actual})
-		console.log(select);
 		predict = select[0]['predict'+random]
 		// create container
-		target = document.querySelector('body');
-		div = document.createElement('div');
-		div.setAttribute("class", "cluster")
-		div.setAttribute('id', actual)
-		h1 = document.createElement('h1')
-		h1.innerHTML=predict;
-		h2 = document.createElement('h2')
-		h2.innerHTML="Google image dataset: " + actual + " // top 20"
-		h2.setAttribute('class','label')
-		h1.setAttribute("id", actual+"prediction")
-		overlay = document.createElement('div')
-		overlay.setAttribute('class', 'overlay')
-		labeller = document.createElement('h2')
-		labeller.innerHTML="Anonymous " + random+ " // city, country // M // 32"
-		labeller.setAttribute('id', 'labeller'+actual)
-		labeller.setAttribute("class", "labeller")
-		div.appendChild(h1)
-		div.appendChild(h2)
-		div.appendChild(labeller)
+		createContainer(keywords[i], random)
 		// get the images
-		getImages(path, actual, target, div, overlay)
 	}
+}
+
+function createContainer (actual, random){
+	target = document.querySelector('body');
+	div = document.createElement('div');
+	div.setAttribute("class", "cluster")
+	div.setAttribute('id', actual)
+	h1 = document.createElement('h1')
+	h1.innerHTML=predict;
+	h2 = document.createElement('h2')
+	h2.innerHTML="Google image dataset: " + actual + " // top 100"
+	h2.setAttribute('class','label')
+	h1.setAttribute("id", actual+"prediction")
+	overlay = document.createElement('div')
+	overlay.setAttribute('class', 'overlay')
+	labeller = document.createElement('h2')
+	labeller.innerHTML="Anonymous " + random+ " // city, country // age"
+	labeller.setAttribute('id', 'labeller'+actual)
+	labeller.setAttribute("class", "labeller")
+	div.appendChild(h1)
+	div.appendChild(h2)
+	div.appendChild(labeller)
+	console.log('created '+ actual + " container")
+	getImages(path, actual, target, div, overlay)
 }
 
 function getImages(path, keyword, target, div, overlay){
@@ -211,6 +228,7 @@ function getImages(path, keyword, target, div, overlay){
 			}
 			div.appendChild(overlay)
 			target.appendChild(div)
+			console.log('appended '+ keyword + " dataset")
 		})
 		.catch(function(error){
 
