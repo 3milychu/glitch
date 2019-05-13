@@ -15,6 +15,40 @@ body, html {
 	left:0;
 	position:relative;
 }
+#results {
+	color:white;
+	background-color:#1d1d1d;
+}
+#results h2 {
+	width:100%;
+	font-size:2em;
+	position:relative;
+	font-family:'Fjalla One', sans-serif;
+	letter-spacing:-0.05em;
+	text-transform:uppercase;
+	vertical-align:text-top;
+	z-index:100;
+	color:white;
+	opacity:0.8;
+	text-align:center;
+}
+#results p {
+	font-family:'Inconsolata', monospace;
+	color:white;
+	position:relative;
+	text-align:center;
+	opacity:1;
+	z-index:300;
+	text-transform:uppercase;
+	font-size:0.8em;
+}
+#score {
+	border:0.05em solid white;
+	padding:0% 3%;
+	width:fit-content;
+	margin:auto;
+	line-height:0.5em;
+}
 .cluster, .main, .about {
 	scroll-snap-align: center;
 	scroll-snap-stop: always;
@@ -64,10 +98,59 @@ h2 {
 	font-size:0.8em;
 
 }
+.cursor {
+    position: relative;
+    top:30%;
+}
+.cursor i {
+    position: absolute;
+    width: 1px;
+    height: 80%;
+    background-color: gray;
+    left: 5px;
+    top: 10%;
+    animation-name: blink;
+    animation-duration: 800ms;
+    animation-iteration-count: infinite;
+    opacity: 1;
+}
+
+.cursor input:focus + i {
+    display: none;
+}
+
+@keyframes blink {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+input {
+	position:absolute;
+	z-index:100;
+	width:90%;
+	left:5%;
+	font-size:10em;
+	background-color:transparent;
+	border:none;
+	border-bottom:0.05em solid white;
+	font-family:'Fjalla One', sans-serif;
+	letter-spacing:-0.05em;
+	text-transform:uppercase;
+	vertical-align:text-top;
+	z-index:100;
+	color:white;
+	opacity:0.8;
+	text-align:center;
+}
+input:focus {
+	outline:0;
+}
 .label {
 	top:0;
 	left:0;
 	margin:5%;
+	text-align:center;
+	background-color:#1d1d1d;
+	padding:3%;
 }
 .labeller {
 	bottom: 0%;
@@ -147,13 +230,18 @@ h2 {
 </div>
 
 <div class="about">
-	<p>Glitch scraped Google images for the top 100 images of selected keywords to represent clusters of information. It asked 5 persons of different cultural orientations to serve as “mechanical turks” to label the clusters.  Each set of images is modified with a random label prediction from a “mechanical turk”, and who they were. It hopes to show that labelling and naming clusters in classification, an often taken-for-granted element of truth in machine learning models, are subjective.</p>
+	<p>Glitch scrapes Google images for five random image clusters and asks you to predict the keyword that identifies said cluster. It compares your results against that of the actual keyword used by the algorithm to identify that image dataset, returning how similiar you think to an image clustering algorithm.</p>
 </div>
 
 </body>
 <script>
 
 var keywords;
+var submit1;
+var submit2;
+var submit3;
+var submit4;
+var submit5;
 
 // get the predictions data
 d3.csv('data/predictions.csv')
@@ -161,10 +249,132 @@ d3.csv('data/predictions.csv')
 		getKeywords(data)
 		drawClusters(data)
 		glitchLabels(data);
+		setTimeout(function() {
+			readInputs();
+		},3000)
+
 	})
 	.catch(function(error){
 
 	})
+
+function showResults() {
+	target = document.querySelector('body')
+	div = document.createElement('div')
+	div.setAttribute("class","cluster")
+	div.setAttribute('id','results')
+	console.log(keywords)
+	formatPercent = d3.format(".0%")
+	var score=0;
+	if(keywords[0]==submit1){
+		score+=1;
+	}
+	if(keywords[1]==submit2){
+		score+=1;
+	}
+	if(keywords[2]==submit3){
+		score+=1;
+	}
+	if(keywords[3]==submit4){
+		score+=1;
+	}
+	if(keywords[4]==submit5){
+		score+=1;
+	}
+	div.innerHTML+="<div><h2>"+keywords[0]+"</h2><p>Your prediction:"+submit1+"</p></div>"
+	div.innerHTML+="<div><h2>"+keywords[1]+"</h2><p>Your prediction:"+submit2+"</p></div>"
+	div.innerHTML+="<div><h2>"+keywords[2]+"</h2><p>Your prediction:"+submit3+"</p></div>"
+	div.innerHTML+="<div><h2>"+keywords[3]+"</h2><p>Your prediction:"+submit4+"</p></div>"
+	div.innerHTML+="<div><h2>"+keywords[4]+"</h2><p>Your prediction:"+submit5+"</p></div>"
+	div.innerHTML+="<div id='score'><h2>How much you think like an algorithm: "+formatPercent(score/5)+"</h2>"
+	target.appendChild(div)
+	console.log('appended')
+}
+
+function readInputs(){
+input1 = document.querySelector('#art_nouveauprediction')
+input2 = document.querySelector('#perspectiveprediction')
+input3 = document.querySelector('#salonnièresprediction')
+input4 = document.querySelector('#fridaprediction')
+input5 = document.querySelector('#cut_the_bitch_off_like_an_editprediction')
+input1.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+		submit1 = input1.value;
+		console.log(submit1)
+		cluster = input1.parentElement.parentElement
+		next_cluster = cluster.nextSibling
+		console.log(next_cluster.offsetTop)
+		window.scrollTo({
+		  top: next_cluster.offsetTop,
+		  behavior: 'smooth'
+		});
+  	}
+  })
+
+ input2.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+		submit2 = input2.value;
+		console.log(submit2)
+		cluster = input2.parentElement.parentElement
+		next_cluster = cluster.nextSibling
+		console.log(next_cluster.offsetTop)
+		window.scrollTo({
+		  top: next_cluster.offsetTop,
+		  behavior: 'smooth'
+		});
+  	}
+  })
+
+ input3.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+		submit3 = input3.value;
+		console.log(submit3)
+		cluster = input3.parentElement.parentElement
+		next_cluster = cluster.nextSibling
+		console.log(next_cluster.offsetTop)
+		window.scrollTo({
+		  top: next_cluster.offsetTop,
+		  behavior: 'smooth'
+		});
+  	}
+  })
+
+ input4.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+		submit4 = input4.value;
+		console.log(submit4)
+		cluster = input4.parentElement.parentElement
+		next_cluster = cluster.nextSibling
+		console.log(next_cluster.offsetTop)
+		window.scrollTo({
+		  top: next_cluster.offsetTop,
+		  behavior: 'smooth'
+		});
+  	}
+  })
+
+input5.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+		submit5 = input5.value;
+		console.log(submit5)
+		console.log('show results')
+		showResults();
+		cluster = input5.parentElement.parentElement
+		next_cluster = cluster.nextSibling
+		console.log(next_cluster.offsetTop)
+		window.scrollTo({
+		  top: next_cluster.offsetTop,
+		  behavior: 'smooth'
+		});
+  	}
+  })
+
+}
 
 function getKeywords(data){
 	keywords= data.map(function(d){return d.keyword})
@@ -190,21 +400,21 @@ function createContainer (actual, random){
 	div = document.createElement('div');
 	div.setAttribute("class", "cluster")
 	div.setAttribute('id', actual)
-	h1 = document.createElement('h1')
-	h1.innerHTML=predict;
+	cursor = document.createElement('div')
+	cursor.setAttribute('class','cursor')
+	input = document.createElement('input')
+	// input.innerHTML=predict;
 	h2 = document.createElement('h2')
-	h2.innerHTML="Google image dataset: " + actual + " // top 100"
+	h2.innerHTML="type in a label:"
 	h2.setAttribute('class','label')
-	h1.setAttribute("id", actual+"prediction")
+	input.setAttribute("id", actual+"prediction")
 	overlay = document.createElement('div')
 	overlay.setAttribute('class', 'overlay')
-	labeller = document.createElement('h2')
-	labeller.innerHTML="Anonymous " + random+ " // city, country // age"
-	labeller.setAttribute('id', 'labeller'+actual)
-	labeller.setAttribute("class", "labeller")
-	div.appendChild(h1)
+	// div.appendChild(h1)
 	div.appendChild(h2)
-	div.appendChild(labeller)
+	div.appendChild(cursor)
+	cursor.appendChild(input)
+	cursor.innerHTML+="<i></i>"
 	console.log('created '+ actual + " container")
 	getImages(path, actual, target, div, overlay)
 }
@@ -237,26 +447,24 @@ function getImages(path, keyword, target, div, overlay){
 }
 
 function glitchLabels(data){
-	setInterval(function() {
-		body = document.querySelector('body')
-		glitch = document.createElement('img')
-		glitch.src="assets/glitch.jpg"
-		glitch.setAttribute("class", "glitch")
-		body.appendChild(glitch);
-		for(i=0;i<keywords.length;i++){
-			target = document.querySelector('#'+keywords[i]+"prediction")
-			random = Math.floor((Math.random() * 3) + 1);
-			labeller = document.querySelector('#labeller'+keywords[i])
-			select = data.filter(function(d){return d.keyword == keywords[i]})
-			predict = select[0]['predict'+random]
-			target.innerHTML=predict;
-			labeller.innerHTML="Anonymous " + random+ " // city, country // M // 32"
-		}
-		setTimeout(function() {
-			glitch.remove();
+	// setInterval(function() {
+	// 	body = document.querySelector('body')
+	// 	glitch = document.createElement('img')
+	// 	glitch.src="assets/glitch.jpg"
+	// 	glitch.setAttribute("class", "glitch")
+	// 	body.appendChild(glitch);
+	// 	// for(i=0;i<keywords.length;i++){
+	// 	// 	target = document.querySelector('#'+keywords[i]+"prediction")
+	// 	// 	random = Math.floor((Math.random() * 3) + 1);
+	// 	// 	select = data.filter(function(d){return d.keyword == keywords[i]})
+	// 	// 	predict = select[0]['predict'+random]
+	// 	// 	target.innerHTML=predict;
+	// 	// }
+	// 	setTimeout(function() {
+	// 		glitch.remove();
 
-		},1000)
-	},5000)
+	// 	},1000)
+	// },5000)
 }
 
 </script>
