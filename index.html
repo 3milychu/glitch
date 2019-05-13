@@ -242,6 +242,7 @@ var submit2;
 var submit3;
 var submit4;
 var submit5;
+var score=0;
 
 // get the predictions data
 d3.csv('data/predictions.csv')
@@ -265,20 +266,19 @@ function showResults() {
 	div.setAttribute('id','results')
 	console.log(keywords)
 	formatPercent = d3.format(".0%")
-	var score=0;
-	if(keywords[0]==submit1){
+	if(keywords[0].replace(/_/g, " ")==submit1){
 		score+=1;
 	}
-	if(keywords[1]==submit2){
+	if(keywords[1].replace(/_/g, " ")==submit2){
 		score+=1;
 	}
-	if(keywords[2]==submit3){
+	if(keywords[2].replace(/_/g, " ")==submit3){
 		score+=1;
 	}
-	if(keywords[3]==submit4){
+	if(keywords[3].replace(/_/g, " ")==submit4){
 		score+=1;
 	}
-	if(keywords[4]==submit5){
+	if(keywords[4].replace(/_/g, " ")==submit5){
 		score+=1;
 	}
 	div.innerHTML+="<div><h2>"+keywords[0]+"</h2><p>Your prediction:"+submit1+"</p></div>"
@@ -286,6 +286,7 @@ function showResults() {
 	div.innerHTML+="<div><h2>"+keywords[2]+"</h2><p>Your prediction:"+submit3+"</p></div>"
 	div.innerHTML+="<div><h2>"+keywords[3]+"</h2><p>Your prediction:"+submit4+"</p></div>"
 	div.innerHTML+="<div><h2>"+keywords[4]+"</h2><p>Your prediction:"+submit5+"</p></div>"
+	console.log(score);
 	div.innerHTML+="<div id='score'><h2>How much you think like an algorithm: "+formatPercent(score/5)+"</h2>"
 	target.appendChild(div)
 	console.log('appended')
